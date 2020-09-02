@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: airflow
+...
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-workflow-airflow
+  namespace: argocd
+
+  # annotations:
+  #   argocd.argoproj.io/compare-options: IgnoreExtraneous
+    
+  # finalizers:  # Add a this finalizer ONLY if you want these to cascade delete.
+  #   - resources-finalizer.argocd.argoproj.io 
+spec:
+  project: default
+
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kubernetes-dashboard
+
+  source:
+
+    # New chart v2.X in new helm repo
+    repoURL: 'https://kubernetes-charts.storage.googleapis.com/'
+    targetRevision: 7.6.0
+    chart: airflow
+
+    helm:
+      # Release name override (defaults to application name)
+      releaseName: airflow
+
+      # values: |
+
+      #   metricsScraper:
+      #     enabled: true
+
+      #   metrics-server:
+      #     enabled: true
+
+
+  # # Sync policy
+  #   syncPolicy:
+  #     automated: {}
+  # #     prune: false # Specifies if resources should be pruned during auto-syncing ( false by default ).
+  # #     selfHeal: false # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+
